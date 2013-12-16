@@ -19,6 +19,12 @@ plugin.activemq.pool.1.port = 61613
 plugin.activemq.pool.1.user = <%= scope.lookupvar('::openshift_origin::mcollective_user') %>
 plugin.activemq.pool.1.password = <%= scope.lookupvar('::openshift_origin::mcollective_password') %>
 
+connector = amqp
+plugin.amqp.host = <%= scope.lookupvar('::openshift_origin::activemq_hostname') %>
+plugin.amqp.port = 61613
+plugin.amqp.user = <%= scope.lookupvar('::openshift_origin::mcollective_user') %>
+plugin.amqp.password = <%= scope.lookupvar('::openshift_origin::mcollective_password') %>
+
 # Facts
 factsource = yaml
 plugin.yaml = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/etc/mcollective/facts.yaml
