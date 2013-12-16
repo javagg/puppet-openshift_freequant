@@ -1,6 +1,13 @@
 class openshift_freequant(
+  $roles = ['node'],
+  $domain = 'example.com',
+  $node_hostname = "node.${domain}",
   $freequant_repo_base = undef,
-  $node_amqp_url = undef
+  $node_amqp_url = undef,
+  $conf_node_external_eth_dev = 'eth0',
+  $conf_named_upstream_dns = ['114.114.114.114', '8.8.8.8'],
+  $install_cartridges = ['diy'],
+
 ) {
   if ($::openshift_freequant::freequant_repo_base != undef) {
     $os_ver = $::operatingsystem ? {
@@ -17,12 +24,14 @@ class openshift_freequant(
       ]
     }
   }
+
   class {'openshift_origin':
-    roles => ['node'],
-    domain => 'freequant.net',
-    node_hostname => 'node1.freequant.net',
-    conf_named_upstream_dns => ['202.117.0.20', '114.114.114.114', '8.8.8.8'],
-    install_cartridges => ['diy'],
+    roles => $roles,
+    domain => $domain,
+    node_hostname => $node_hostname,
+    conf_node_external_eth_dev => $conf_node_external_eth_dev,
+    conf_named_upstream_dns => $conf_named_upstream_dns, 
+    install_cartridges => $install_cartridges,
     update_resolv_conf => false
   }
 
