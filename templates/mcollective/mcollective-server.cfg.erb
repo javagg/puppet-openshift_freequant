@@ -12,18 +12,29 @@ registerinterval = 30
 securityprovider = psk
 plugin.psk = unset
 
+<%
+require 'uri'
+amqp_url = scope.lookupvar('::openshift_freequant::node_amqp_url')
+
+unless amqp_url
+%>
 connector = activemq
 plugin.activemq.pool.size = 1
 plugin.activemq.pool.1.host = <%= scope.lookupvar('::openshift_origin::activemq_hostname') %>
 plugin.activemq.pool.1.port = 61613
 plugin.activemq.pool.1.user = <%= scope.lookupvar('::openshift_origin::mcollective_user') %>
 plugin.activemq.pool.1.password = <%= scope.lookupvar('::openshift_origin::mcollective_password') %>
-
+<%
+else
+  amqp_uri = URI.parse(amqp_url)
+%>
 connector = amqp
-plugin.amqp.host = <%= scope.lookupvar('::openshift_origin::activemq_hostname') %>
-plugin.amqp.port = 61613
-plugin.amqp.user = <%= scope.lookupvar('::openshift_origin::mcollective_user') %>
-plugin.amqp.password = <%= scope.lookupvar('::openshift_origin::mcollective_password') %>
+plugin.amqp.host = <%= amqp_uri.host %>
+plugin.amqp.port = <%= amqp_uri.port %>
+plugin.amqp.user = <%= amqp_uri.user %>
+plugin.amqp.password = <%= amqp_uri.password %>
+plugin.amqp.vhost = <%= amqp_uri.path %>
+<% end %>
 
 # Facts
 factsource = yaml

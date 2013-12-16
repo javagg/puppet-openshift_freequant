@@ -1,4 +1,22 @@
-class openshift_freequant {
+class openshift_freequant(
+  $freequant_repo_base = undef,
+  $node_amqp_url = undef
+) {
+  if ($::openshift_freequant::freequant_repo_base != undef) {
+    $os_ver = $::operatingsystem ? {
+      'Fedora' => 'fedora-19',
+      default => 'rhel-6'
+    }
+    $repo_path = "${::openshift_freequant::freequant_repo_base}/${os_ver}/${::architecture}"
+    augeas { 'Freequant Repository':
+      context => "/files/etc/yum.repos.d/freequant.repo",
+      changes => [
+        "set freequant/id freequant",
+        "set freequant/baseurl ${$repo_path}",
+        "set freequant/gpgcheck 0",
+      ]
+    }
+  }
   class {'openshift_origin':
     roles => ['node'],
     domain => 'freequant.net',
@@ -8,9 +26,7 @@ class openshift_freequant {
     update_resolv_conf => false
   }
 
-  File <| title == 'mcollective server config' |> {
-    content => template('openshift_freequant/mcollective/mcollective-server.cfg.erb'),
-  }
+  include openshift_freequant::mcollective_server
 
   File  <| title == '/etc/resolv.conf' |> {
     content => "nameserver 192.168.0.1"
