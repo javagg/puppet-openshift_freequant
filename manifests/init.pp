@@ -57,7 +57,7 @@ class openshift_freequant(
   include openshift_freequant::mcollective_server
 
   File  <| title == '/etc/resolv.conf' |> {
-    content => "nameserver 192.168.0.1"
+    content => "nameserver 192.168.0.1\nnameserver 114.114.114.114\nnameserver 8.8.8.8\n"
   }
   
   ensure_resource('package', ['nodejs010-nodejs'], {
