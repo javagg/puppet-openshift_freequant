@@ -1,4 +1,3 @@
-
 class openshift_freequant::prepare {
   file {'openshift config dir':
     ensure => directory,
