@@ -1,0 +1,29 @@
+# meituan dns: nameserver 10.98.20.253
+
+# Perpare puppet runtime
+# Update system (to latest)
+yum update -y
+
+# Install puppet
+rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+yum install -y puppet git
+
+# Perpare selinux
+yum install -y selinux-policy-targeted policycoreutils-python
+
+cd ~
+PMODULES="pmodules"
+mkdir -p $PMODULES
+git clone https://github.com/openshift/puppet-openshift_origin.git
+git clone https://github.com/javagg/puppet-openshift_freequant.git
+puppet module install puppetlabs-ntp -i $PMODULES
+cd $PMODULES
+ln -s ../puppet-openshift_origin openshift_origin
+ln -s ../puppet-openshift_freequant openshift_freequant
+
+cd ~
+
+#puppet apply puppet-openshift_freequant/test/configure_node.pp --modulepath pmodules --debug
+#service openshift-tc start
+
+
