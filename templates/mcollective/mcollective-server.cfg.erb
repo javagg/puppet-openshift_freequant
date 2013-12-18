@@ -15,18 +15,7 @@ plugin.psk = unset
 <%
 require 'uri'
 amqp_url = scope.lookupvar('::openshift_freequant::node_amqp_url')
-
-unless amqp_url == 'undef'
-%>
-connector = activemq
-plugin.activemq.pool.size = 1
-plugin.activemq.pool.1.host = <%= scope.lookupvar('::openshift_origin::activemq_hostname') %>
-plugin.activemq.pool.1.port = 61613
-plugin.activemq.pool.1.user = <%= scope.lookupvar('::openshift_origin::mcollective_user') %>
-plugin.activemq.pool.1.password = <%= scope.lookupvar('::openshift_origin::mcollective_password') %>
-<%
-else
-  amqp_uri = URI.parse(amqp_url)
+amqp_uri = URI.parse(amqp_url)
 %>
 connector = amqp
 plugin.amqp.host = <%= amqp_uri.host %>
