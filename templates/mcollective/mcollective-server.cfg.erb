@@ -16,7 +16,7 @@ plugin.psk = unset
 require 'uri'
 amqp_url = scope.lookupvar('::openshift_freequant::node_amqp_url')
 
-unless amqp_url
+unless amqp_url == 'undef'
 %>
 connector = activemq
 plugin.activemq.pool.size = 1

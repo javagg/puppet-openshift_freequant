@@ -17,7 +17,6 @@ class openshift_freequant(
   $conf_node_external_eth_dev = 'eth0',
   $conf_named_upstream_dns = ['114.114.114.114', '8.8.8.8'],
   $install_cartridges = ['diy'],
-
 ) {
   stage {'prepare': 
     before => Stage['main'],
@@ -54,10 +53,12 @@ class openshift_freequant(
     update_resolv_conf => false
   }
 
-  include openshift_freequant::mcollective_server
+  if ($::openshift_freequant::node_amqp_url != undef) { 
+    include openshift_freequant::mcollective_server
+  }
 
   File  <| title == '/etc/resolv.conf' |> {
-    content => "nameserver 192.168.0.1\nnameserver 114.114.114.114\nnameserver 8.8.8.8\n"
+    content => "nameserver 10.98.20.253\nnameserver 114.114.114.114\nnameserver 8.8.8.8\n"
   }
   
   ensure_resource('package', ['nodejs010-nodejs'], {
