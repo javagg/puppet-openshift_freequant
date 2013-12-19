@@ -11,4 +11,15 @@ class openshift_freequant::cloud9 {
     require => Package['openshift-freequant-node-ideproxy'],
     provider => $openshift_origin::params::os_init_provider,
   }
+
+  firewall { 'node-ide-http':
+    port => '8100',
+    protocol => 'tcp',
+  }
+
+  firewall { 'node-ide-https':
+    port => '8543',
+    protocol => 'tcp',
+  }
+
 }

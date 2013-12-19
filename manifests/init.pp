@@ -63,7 +63,10 @@ class openshift_freequant(
     content => "nameserver 10.98.20.253\nnameserver 114.114.114.114\nnameserver 8.8.8.8\n"
   }
   
-  ensure_resource('package', "rubygem-openshift-freequant-node", {
+  ensure_resource('package', [
+    'rubygem-openshift-freequant-node', 
+    'marketcetera-strategyagent'
+  ], {
     ensure => present,
     require => Augeas['Freequant Repository']
   })
