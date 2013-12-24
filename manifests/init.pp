@@ -50,7 +50,7 @@ class openshift_freequant(
     domain => $domain,
     node_hostname => $node_hostname,
     conf_node_external_eth_dev => $conf_node_external_eth_dev,
-    conf_named_upstream_dns => $conf_named_upstream_dns, 
+    #conf_named_upstream_dns => $conf_named_upstream_dns, 
     install_cartridges => $origin_cartridges,
     update_resolv_conf => false
   }
@@ -60,7 +60,7 @@ class openshift_freequant(
   }
 
   File  <| title == '/etc/resolv.conf' |> {
-    content => "nameserver 10.98.20.253\nnameserver 114.114.114.114\nnameserver 8.8.8.8\n"
+    noop => true
   }
   
   ensure_resource('package', [
@@ -88,4 +88,15 @@ class openshift_freequant(
   }
 
   class {'openshift_freequant::cartridges': }
+
+  augeas { 'Modify node config':
+    context => "/files/etc/openshift/node.conf",
+    changes => [
+      'set OPENSHIFT_NODE_PLUGINS "openshift-freequant-node"',
+    ],
+    require  => [
+      Package['rubygem-openshift-origin-node'],
+      File['openshift node config'],
+    ]
+  }
 }
