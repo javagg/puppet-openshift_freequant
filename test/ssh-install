@@ -18,8 +18,8 @@ puppet module install puppetlabs-ntp -i $PMODULES
 cd $PMODULES
 ln -s ../puppet-openshift_origin openshift_origin
 ln -s ../puppet-openshift_freequant openshift_freequant
-
 cd ~
+
 
 #puppet apply puppet-openshift_freequant/test/configure_node.pp --modulepath pmodules --debug
 #service openshift-tc start
