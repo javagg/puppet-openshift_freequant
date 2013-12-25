@@ -27,13 +27,12 @@ class openshift_freequant(
     stage => prepare,
   }
  
-  if $conf_node_external_eth_dev == undef {
-    $pif = first(split($::public_interfaces, ','))
-    $node_external_dev = $pif ? {
-      undef => 'eth0',
-      default => $pif
-    }
+  $node_external_dev = $conf_node_external_eth_dev ? {
+    undef => $::interface,
+    default => $conf_node_external_eth_dev
   }
+
+  notice("configure $node_external_dev")
 
   if ($::openshift_freequant::freequant_repo_base != undef) {
     $os = $::operatingsystem ? {
