@@ -79,6 +79,7 @@ class openshift_freequant(
   })
 
   class {'openshift_freequant::cloud9': }
+  class {'openshift_freequant::node': }
 
   class openshift_freequant::cartridges {
     define freequantCartridge {
