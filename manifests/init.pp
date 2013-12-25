@@ -14,7 +14,7 @@ class openshift_freequant(
   $node_hostname = "node.${domain}",
   $freequant_repo_base = undef,
   $node_amqp_url = undef,
-  $conf_node_external_eth_dev = 'eth0',
+  $conf_node_external_eth_dev = undef,
   $conf_named_upstream_dns = ['114.114.114.114', '8.8.8.8'],
   $origin_cartridges = ['diy'],
   $freequant_cartridges = ['strategy']
@@ -27,6 +27,14 @@ class openshift_freequant(
     stage => prepare,
   }
  
+  if $conf_node_external_eth_dev == undef {
+    $pif = first(split($::public_interfaces, ','))
+    $node_external_dev = $pif ? {
+      undef => 'eth0',
+      default => $pif
+    }
+  }
+
   if ($::openshift_freequant::freequant_repo_base != undef) {
     $os = $::operatingsystem ? {
       'Fedora' => 'fedora',
@@ -49,7 +57,7 @@ class openshift_freequant(
     roles => $roles,
     domain => $domain,
     node_hostname => $node_hostname,
-    conf_node_external_eth_dev => $conf_node_external_eth_dev,
+    conf_node_external_eth_dev => $node_external_dev,
     #conf_named_upstream_dns => $conf_named_upstream_dns, 
     install_cartridges => $origin_cartridges,
     update_resolv_conf => false

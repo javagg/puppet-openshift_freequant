@@ -9,8 +9,9 @@ def _public?(ip)
 end
 Facter.add("public_interfaces") do
   setcode do
-    ifaces = Facter.value('interfaces').split(',')
-    ifaces.select do |iface|
+    ifaces = Facter.value('interfaces')
+    ifaces = ifaces.split(',') unless ifaces.nil?
+    ifaces = ifaces.select do |iface|
       ip = Facter.value("ipaddress_#{iface}")
       _public?(ip)
     end
