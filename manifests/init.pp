@@ -95,11 +95,15 @@ class openshift_freequant(
   }
 
   class {'openshift_freequant::cartridges': }
-
+  
+  # $::interface return public interface preferablely
+  $ipaddress = inline_template("<%= @ipaddress_$::interface %>")
+  notice("use ip: $ipaddress")
   augeas { 'Modify node config':
     context => "/files/etc/openshift/node.conf",
     changes => [
       'set OPENSHIFT_NODE_PLUGINS "openshift-freequant-node"',
+      'set PUBLIC_IP $ipaddress'
     ],
     require  => [
       Package['rubygem-openshift-origin-node'],
