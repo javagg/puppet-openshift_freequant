@@ -1,3 +1,9 @@
+<%
+require 'uri'
+uri = URI.parse(scope.lookupvar('::openshift_freequant::node_mq_url'))
+scheme = uri.scheme
+%>
+
 topicprefix = /topic/
 main_collective = mcollective
 collectives = mcollective
@@ -5,24 +11,33 @@ libdir = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix')
 logfile = /var/log/mcollective.log
 loglevel = debug
 daemonize = <%= scope.lookupvar('::operatingsystem') == "Fedora" ? '0' : '1'%>
-direct_addressing = 1
+direct_addressing = <% if scheme == "activemq" %> 1 <% else %> 0 <% end %>
 registerinterval = 30
 
 # Plugins
 securityprovider = psk
 plugin.psk = unset
 
-<%
-require 'uri'
-amqp_url = scope.lookupvar('::openshift_freequant::node_amqp_url')
-amqp_uri = URI.parse(amqp_url)
-%>
+<% if scheme == "activemq" %>
+connector = activemq
+plugin.activemq.pool.size = 1
+plugin.activemq.pool.1.host = <%= uri.host %>
+plugin.activemq.pool.1.port = <%= uri.port %>
+plugin.activemq.pool.1.user = <%= uri.user %>
+plugin.activemq.pool.1.password = <%= uri.password %>
+<% elsif scheme == "rabbitmq" or scheme == "amqp" %>
 connector = amqp
-plugin.amqp.host = <%= amqp_uri.host %>
-plugin.amqp.port = <%= amqp_uri.port %>
-plugin.amqp.user = <%= amqp_uri.user %>
-plugin.amqp.password = <%= amqp_uri.password %>
-plugin.amqp.vhost = <%= amqp_uri.path %>
+plugin.amqp.host = <%= uri.host %>
+plugin.amqp.port = <%= uri.port %>
+plugin.amqp.user = <%= uri.user %>
+plugin.amqp.password = <%= uri.password %>
+plugin.amqp.vhost = <%= uri.path %>
+<% elsif scheme == "mqtt" %>
+connector = mqtt
+plugin.mqtt.remote_host = <%= uri.host %>
+plugin.mqtt.remote_port = <%= uri.port %>
+plugin.mqtt.username = <%= uri.user %>
+plugin.mqtt.password = <%= uri.password %>
 <% end %>
 
 # Facts

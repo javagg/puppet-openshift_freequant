@@ -13,7 +13,7 @@ class openshift_freequant(
   $domain = 'example.com',
   $node_hostname = "node.${domain}",
   $freequant_repo_base = undef,
-  $node_amqp_url = undef,
+  $node_mq_url = undef,
   $conf_node_external_eth_dev = undef,
   $conf_named_upstream_dns = ['114.114.114.114', '8.8.8.8'],
   $origin_cartridges = ['diy'],
@@ -57,12 +57,11 @@ class openshift_freequant(
     domain => $domain,
     node_hostname => $node_hostname,
     conf_node_external_eth_dev => $node_external_dev,
-    #conf_named_upstream_dns => $conf_named_upstream_dns, 
     install_cartridges => $origin_cartridges,
     update_resolv_conf => false
   }
 
-  if ($::openshift_freequant::node_amqp_url != undef) { 
+  if ($::openshift_freequant::node_mq_url != undef) { 
     include openshift_freequant::mcollective_server
   }
 

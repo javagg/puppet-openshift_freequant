@@ -1,7 +1,10 @@
 class openshift_freequant::mcollective_server {
   include openshift_origin::params
   
-  ensure_resource('package', "${::openshift_origin::params::ruby_scl_prefix}mcollective-amqp-plugin", {
+  ensure_resource('package', [
+      "${::openshift_origin::params::ruby_scl_prefix}mcollective-amqp-plugin",
+      "${::openshift_origin::params::ruby_scl_prefix}mcollective-mqtt-plugin"
+    ], {
     require => Augeas['Freequant Repository']
   })
 
